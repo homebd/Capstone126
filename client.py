@@ -1,5 +1,46 @@
 import cv2
 import requests
+
+# Flask 서버 URL (ngrok에서 제공된 URL로 변경 필요)
+flask_server_url = "http://<your-ngrok-url>/process_frame"
+
+# 웹캠 초기화
+camera = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = camera.read()
+    if not ret:
+        print("Failed to capture frame.")
+        break
+
+    # 프레임을 JPEG로 인코딩
+    _, buffer = cv2.imencode('.jpg', frame)
+
+    # Flask 서버로 전송
+    try:
+        response = requests.post(
+            flask_server_url,
+            files={"file": buffer.tobytes()}
+        )
+        if response.status_code == 200:
+            print("Response from server:", response.json())
+        else:
+            print("Failed to process frame:", response.status_code, response.text)
+    except Exception as e:
+        print("Connection error:", e)
+
+    # 키 입력으로 종료
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+camera.release()
+
+
+
+
+'''
+import cv2
+import requests
 import threading
 
 # ngrok 퍼블릭 URL
@@ -54,3 +95,4 @@ capture_thread.start()
 # 이미지 전송 스레드 시작
 send_thread = threading.Thread(target=send_images)
 send_thread.start()
+'''
