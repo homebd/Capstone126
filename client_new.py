@@ -35,15 +35,15 @@ flask_thread = threading.Thread(target=run_flask)
 flask_thread.daemon = True
 flask_thread.start()
 
-
-def get_ngrok_url():
-    # 라즈베리파이의 ngrok URL을 가져오기
-    response = requests.get("http://localhost:5000/get_ngrok_url")
-    ngrok_url = response.json().get('ngrok_url', '')
+# ngrok URL을 가져오기 위해 서버 대기
+def fetch_ngrok_url():
+    global ngrok_url
+    while not ngrok_url:  # ngrok URL을 받을 때까지 대기
+        time.sleep(1)
     return ngrok_url
 
 # Flask 서버 URL 자동 설정
-flask_server_url = get_ngrok_url() + "/process_frame"
+flask_server_url = fetch_ngrok_url() + "/process_frame"
 
 # 웹캠 초기화
 camera = cv2.VideoCapture(0)
