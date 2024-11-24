@@ -3,6 +3,8 @@ import threading
 import os
 import cv2
 import numpy as np
+import requests
+import time
 
 app = Flask(__name__)
 
@@ -37,12 +39,10 @@ def run_ngrok():
     time.sleep(5)  # ngrok가 시작할 시간을 주기 위해 잠시 대기
     response = os.popen('curl -s localhost:4040/api/tunnels | jq -r ".tunnels[0].public_url"').read().strip()
     print("ngrok URL:", response)
-    return response
 
-# URL을 라즈베리파이로 전송
-def send_ngrok_url_to_raspberry_pi(ngrok_url, raspberry_pi_ip):
-    raspberry_pi_endpoint = f"http://{raspberry_pi_ip}:5000/update_ngrok_url"
-    response = requests.post(raspberry_pi_endpoint, json={"ngrok_url": ngrok_url})
+    # ngrok URL을 라즈베리파이로 전송
+    raspberry_pi_ip = "192.168.1.100"  # 실제 라즈베리파이 IP 주소로 변경
+    response = requests.post(f"http://{raspberry_pi_ip}:5000/update_ngrok_url", json={"ngrok_url": response})
     if response.status_code == 200:
         print("Successfully sent ngrok URL to Raspberry Pi")
     else:
@@ -55,8 +55,4 @@ flask_thread.start()
 
 ngrok_thread = threading.Thread(target=run_ngrok)
 ngrok_thread.daemon = True
-ngrok_url = ngrok_thread.start()
-
-# 라즈베리파이 IP 주소 (실제 주소로 변경 필요)
-raspberry_pi_ip = "192.168.1.100"
-send_ngrok_url_to_raspberry_pi(ngrok_url, raspberry_pi_ip)
+ngrok_thread.start()
