@@ -58,7 +58,7 @@ vi. 라즈베리파이에서 GUI에 결과 및 LED, 부저 신호 출력
 
 ## 사용법
 
-### 'server/'
+### server/
 - server.ipynb: 모델 파일 업로드 후 모든 셸 실행, 최하단 셸에 출력되는 URL 복사
 - preprocessing.ipynb: 영상 파일 업로드 후 전처리 수행, keypoints를 json으로 반환
 - upgrade_data.ipynb: keypoints json을 모델에 맞게 추가 전처리
@@ -66,5 +66,5 @@ vi. 라즈베리파이에서 GUI에 결과 및 LED, 부저 신호 출력
 - best_model.keras: 학습이 완료된 모델 최종본
 
 
-### 'client/'
+### client/
 - gui.py: 라즈베리파이 보드에서 실행하면 URL 입력창 표시, server.ipynb에서 복사한 URL 삽입하여 시작
